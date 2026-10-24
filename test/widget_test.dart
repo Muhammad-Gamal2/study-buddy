@@ -1,30 +1,33 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:study_buddy/main.dart';
+import 'package:study_buddy/screens/home_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Home screen shows the study sessions', (tester) async {
+    await tester.pumpWidget(const StudyBuddyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Study Buddy'), findsOneWidget);
+    expect(find.text('3/6 joined'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Scroll to the bottom so every card has been built.
+    await tester.dragUntilVisible(
+      find.text('Essay feedback circle'),
+      find.byType(Scrollable),
+      const Offset(0, -200),
+    );
+    expect(find.text('English'), findsOneWidget);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  test('formatSessionDate uses a 12-hour clock', () {
+    expect(
+      formatSessionDate(DateTime(2026, 11, 10, 18, 0)),
+      'Tue, Nov 10 · 6:00 PM',
+    );
+    expect(
+      formatSessionDate(DateTime(2026, 11, 14, 0, 5)),
+      'Sat, Nov 14 · 12:05 AM',
+    );
   });
 }
